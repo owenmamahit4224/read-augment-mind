@@ -1,11 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, ExternalLink, Calendar, User, Clock, BookOpen } from 'lucide-react';
 import { SavedArticle } from '@/types/article';
+import AIInsights from './AIInsights';
+import ArticleAnalysis from './ArticleAnalysis';
 
 interface ArticleDetailProps {
   article: SavedArticle;
@@ -73,87 +75,112 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
       </div>
 
       {/* Article Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card>
-          <CardHeader className="space-y-4">
-            <CardTitle className="text-3xl font-bold leading-tight">
-              {article.title}
-            </CardTitle>
-            
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              {article.author && (
-                <div className="flex items-center gap-1">
-                  <User className="h-4 w-4" />
-                  <span>{article.author}</span>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Article Content */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader className="space-y-4">
+                <CardTitle className="text-3xl font-bold leading-tight">
+                  {article.title}
+                </CardTitle>
+                
+                <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                  {article.author && (
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4" />
+                      <span>{article.author}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>{article.timestamp.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    <span>{readingTime} min read</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <BookOpen className="h-4 w-4" />
+                    <span>{Math.round(readingProgress)}% read</span>
+                  </div>
                 </div>
-              )}
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{article.timestamp.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}</span>
+
+                {article.sourceUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(article.sourceUrl, '_blank')}
+                    className="w-fit"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Original Source
+                  </Button>
+                )}
+
+                {article.tags && article.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {article.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </CardHeader>
+
+              <CardContent>
+                <div className="prose prose-lg max-w-none dark:prose-invert">
+                  <div className="whitespace-pre-wrap leading-relaxed text-foreground">
+                    {article.content}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Navigation Footer */}
+            <div className="flex justify-between items-center mt-8 pt-8 border-t">
+              <div>
+                {onPrevious && (
+                  <Button variant="outline" onClick={onPrevious}>
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Previous Article
+                  </Button>
+                )}
               </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>{readingTime} min read</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="h-4 w-4" />
-                <span>{Math.round(readingProgress)}% read</span>
+              <div>
+                {onNext && (
+                  <Button variant="outline" onClick={onNext}>
+                    Next Article
+                    <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
+                  </Button>
+                )}
               </div>
             </div>
-
-            {article.sourceUrl && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(article.sourceUrl, '_blank')}
-                className="w-fit"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Original Source
-              </Button>
-            )}
-
-            {article.tags && article.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {article.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </CardHeader>
-
-          <CardContent>
-            <div className="prose prose-lg max-w-none dark:prose-invert">
-              <div className="whitespace-pre-wrap leading-relaxed text-foreground">
-                {article.content}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Navigation Footer */}
-        <div className="flex justify-between items-center mt-8 pt-8 border-t">
-          <div>
-            {onPrevious && (
-              <Button variant="outline" onClick={onPrevious}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Previous Article
-              </Button>
-            )}
           </div>
-          <div>
-            {onNext && (
-              <Button variant="outline" onClick={onNext}>
-                Next Article
-                <ArrowLeft className="h-4 w-4 ml-2 rotate-180" />
-              </Button>
-            )}
+
+          {/* AI Enhancement Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 space-y-6">
+              <Tabs defaultValue="insights" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="insights">Insights</TabsTrigger>
+                  <TabsTrigger value="analysis">Analysis</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="insights" className="mt-6">
+                  <AIInsights title={article.title} content={article.content} />
+                </TabsContent>
+
+                <TabsContent value="analysis" className="mt-6">
+                  <ArticleAnalysis title={article.title} content={article.content} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
