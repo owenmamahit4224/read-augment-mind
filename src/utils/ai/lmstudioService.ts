@@ -1,0 +1,89 @@
+
+import { AIAnalysisResult, AIInsight } from './types';
+
+export const analyzeWithLMStudio = async (title: string, content: string, endpoint: string): Promise<AIAnalysisResult> => {
+  const prompt = `Analyze this article and provide a structured analysis:
+
+Title: ${title}
+Content: ${content}
+
+Please respond with a JSON object containing:
+- summary: A 2-3 sentence summary
+- keyPoints: Array of 3-5 key points
+- readingLevel: "beginner", "intermediate", or "advanced"
+- estimatedReadingTime: Number of minutes (based on 200 words per minute)
+- tags: Array of 3-5 relevant tags
+
+Respond only with valid JSON.`;
+
+  const response = await fetch(`${endpoint}/v1/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'local-model',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 1000,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`LMStudio API error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return JSON.parse(data.choices[0].message.content);
+};
+
+export const generateInsightsWithLMStudio = async (title: string, content: string, endpoint: string): Promise<AIInsight[]> => {
+  const prompt = `Generate reading insights for this article:
+
+Title: ${title}
+Content: ${content}
+
+Provide insights in the following format as a JSON array:
+[
+  {
+    "type": "summary",
+    "title": "Article Summary",
+    "content": "Brief summary"
+  },
+  {
+    "type": "key-points", 
+    "title": "Key Takeaways",
+    "content": ["point 1", "point 2", "point 3"]
+  },
+  {
+    "type": "questions",
+    "title": "Discussion Questions", 
+    "content": ["question 1", "question 2", "question 3"]
+  },
+  {
+    "type": "related-topics",
+    "title": "Related Topics",
+    "content": ["topic 1", "topic 2", "topic 3"]
+  }
+]`;
+
+  const response = await fetch(`${endpoint}/v1/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'local-model',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 2000,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`LMStudio API error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return JSON.parse(data.choices[0].message.content);
+};

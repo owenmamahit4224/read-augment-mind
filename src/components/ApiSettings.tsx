@@ -48,7 +48,7 @@ const ApiSettings = () => {
           <Label htmlFor="provider">AI Provider</Label>
           <Select
             value={settings.selectedProvider}
-            onValueChange={(value: 'openai' | 'anthropic') => updateSettings('selectedProvider', value)}
+            onValueChange={(value: 'openai' | 'anthropic' | 'gemini' | 'lmstudio') => updateSettings('selectedProvider', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select AI provider" />
@@ -56,6 +56,8 @@ const ApiSettings = () => {
             <SelectContent>
               <SelectItem value="openai">OpenAI (GPT)</SelectItem>
               <SelectItem value="anthropic">Anthropic (Claude)</SelectItem>
+              <SelectItem value="gemini">Google Gemini</SelectItem>
+              <SelectItem value="lmstudio">LMStudio (Local)</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -103,6 +105,45 @@ const ApiSettings = () => {
                 {showKeys ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
+          </div>
+        )}
+
+        {settings.selectedProvider === 'gemini' && (
+          <div className="space-y-2">
+            <Label htmlFor="gemini-key">Gemini API Key</Label>
+            <div className="relative">
+              <Input
+                id="gemini-key"
+                type={showKeys ? 'text' : 'password'}
+                placeholder="AIza..."
+                value={settings.geminiApiKey || ''}
+                onChange={(e) => updateSettings('geminiApiKey', e.target.value)}
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 -translate-y-1/2"
+                onClick={() => setShowKeys(!showKeys)}
+              >
+                {showKeys ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {settings.selectedProvider === 'lmstudio' && (
+          <div className="space-y-2">
+            <Label htmlFor="lmstudio-endpoint">LMStudio Endpoint</Label>
+            <Input
+              id="lmstudio-endpoint"
+              type="text"
+              placeholder="http://localhost:1234"
+              value={settings.lmstudioEndpoint || ''}
+              onChange={(e) => updateSettings('lmstudioEndpoint', e.target.value)}
+            />
+            <p className="text-sm text-muted-foreground">
+              Enter your local LMStudio server endpoint (e.g., http://localhost:1234)
+            </p>
           </div>
         )}
 

@@ -12,5 +12,7 @@ export interface SavedArticle {
 export interface ApiSettings {
   openaiApiKey?: string;
   anthropicApiKey?: string;
-  selectedProvider: 'openai' | 'anthropic';
+  geminiApiKey?: string;
+  lmstudioEndpoint?: string;
+  selectedProvider: 'openai' | 'anthropic' | 'gemini' | 'lmstudio';
 }
