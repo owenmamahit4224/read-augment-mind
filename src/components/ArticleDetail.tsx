@@ -10,6 +10,7 @@ import { SavedArticle } from '@/types/article';
 import AIInsights from './AIInsights';
 import ArticleAnalysis from './ArticleAnalysis';
 import ProperNounSelector from './ProperNounSelector';
+import VocabularySelector from './VocabularySelector';
 
 interface ArticleDetailProps {
   article: SavedArticle;
@@ -169,10 +170,11 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               <Tabs defaultValue="insights" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="insights">Insights</TabsTrigger>
                   <TabsTrigger value="analysis">Analysis</TabsTrigger>
                   <TabsTrigger value="study">Study</TabsTrigger>
+                  <TabsTrigger value="vocabulary">Vocab</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="insights" className="mt-6">
@@ -185,6 +187,14 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
 
                 <TabsContent value="study" className="mt-6">
                   <ProperNounSelector 
+                    articleId={article.id}
+                    articleTitle={article.title}
+                    content={article.content}
+                  />
+                </TabsContent>
+
+                <TabsContent value="vocabulary" className="mt-6">
+                  <VocabularySelector 
                     articleId={article.id}
                     articleTitle={article.title}
                     content={article.content}

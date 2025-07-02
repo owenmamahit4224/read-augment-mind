@@ -5,6 +5,7 @@ import ArticleSaver from '@/components/ArticleSaver';
 import SavedArticlesList from '@/components/SavedArticlesList';
 import ApiSettings from '@/components/ApiSettings';
 import StudyList from '@/components/StudyList';
+import VocabularyList from '@/components/VocabularyList';
 
 const Index = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -24,10 +25,11 @@ const Index = () => {
         </div>
 
         <Tabs defaultValue="save" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="save">Save Article</TabsTrigger>
             <TabsTrigger value="library">My Library</TabsTrigger>
             <TabsTrigger value="study">Study List</TabsTrigger>
+            <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -41,6 +43,10 @@ const Index = () => {
 
           <TabsContent value="study" className="mt-6">
             <StudyList />
+          </TabsContent>
+
+          <TabsContent value="vocabulary" className="mt-6">
+            <VocabularyList />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">

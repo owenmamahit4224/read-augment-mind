@@ -19,6 +19,17 @@ export interface StudyListEntry {
   timestamp: Date;
 }
 
+export interface VocabularyEntry {
+  id: string;
+  word: string;
+  sourceMaterialId: string;
+  sourceMaterialTitle: string;
+  context: string;
+  definition?: string;
+  timestamp: Date;
+  notes?: string;
+}
+
 export interface ApiSettings {
   openaiApiKey?: string;
   anthropicApiKey?: string;
