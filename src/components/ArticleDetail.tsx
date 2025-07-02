@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { ArrowLeft, ExternalLink, Calendar, User, Clock, BookOpen } from 'lucide
 import { SavedArticle } from '@/types/article';
 import AIInsights from './AIInsights';
 import ArticleAnalysis from './ArticleAnalysis';
+import ProperNounSelector from './ProperNounSelector';
 
 interface ArticleDetailProps {
   article: SavedArticle;
@@ -167,9 +169,10 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               <Tabs defaultValue="insights" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="insights">Insights</TabsTrigger>
                   <TabsTrigger value="analysis">Analysis</TabsTrigger>
+                  <TabsTrigger value="study">Study</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="insights" className="mt-6">
@@ -178,6 +181,14 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
 
                 <TabsContent value="analysis" className="mt-6">
                   <ArticleAnalysis title={article.title} content={article.content} />
+                </TabsContent>
+
+                <TabsContent value="study" className="mt-6">
+                  <ProperNounSelector 
+                    articleId={article.id}
+                    articleTitle={article.title}
+                    content={article.content}
+                  />
                 </TabsContent>
               </Tabs>
             </div>

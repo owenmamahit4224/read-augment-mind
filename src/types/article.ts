@@ -9,6 +9,16 @@ export interface SavedArticle {
   tags?: string[];
 }
 
+export interface StudyListEntry {
+  id: string;
+  articleId: string;
+  articleTitle: string;
+  properNoun: string;
+  context: string;
+  notes?: string;
+  timestamp: Date;
+}
+
 export interface ApiSettings {
   openaiApiKey?: string;
   anthropicApiKey?: string;

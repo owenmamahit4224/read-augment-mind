@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ArticleSaver from '@/components/ArticleSaver';
 import SavedArticlesList from '@/components/SavedArticlesList';
 import ApiSettings from '@/components/ApiSettings';
+import StudyList from '@/components/StudyList';
 
 const Index = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -23,9 +24,10 @@ const Index = () => {
         </div>
 
         <Tabs defaultValue="save" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="save">Save Article</TabsTrigger>
             <TabsTrigger value="library">My Library</TabsTrigger>
+            <TabsTrigger value="study">Study List</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -35,6 +37,10 @@ const Index = () => {
 
           <TabsContent value="library" className="mt-6">
             <SavedArticlesList refreshTrigger={refreshTrigger} />
+          </TabsContent>
+
+          <TabsContent value="study" className="mt-6">
+            <StudyList />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
