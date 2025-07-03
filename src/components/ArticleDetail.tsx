@@ -59,7 +59,11 @@ const ArticleDetail = ({ article, onBack, onNext, onPrevious }: ArticleDetailPro
                 readingTime={readingTime}
                 readingProgress={readingProgress}
               />
-              <ArticleContent content={article.content} />
+              <ArticleContent 
+                content={article.content} 
+                articleId={article.id}
+                articleTitle={article.title}
+              />
             </Card>
 
             <ArticleNavigation onPrevious={onPrevious} onNext={onNext} />
