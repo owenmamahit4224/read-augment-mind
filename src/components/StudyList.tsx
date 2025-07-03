@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,14 +8,23 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { BookOpen, Trash2, Edit3, Search, ExternalLink } from 'lucide-react';
 import { useStudyList } from '@/hooks/useStudyList';
+import { useNotesReminder } from '@/hooks/useNotesReminder';
 import { StudyListEntry } from '@/types/article';
 import EmptyState from './EmptyState';
 
 const StudyList = () => {
   const { studyList, updateNotes, removeFromStudyList } = useStudyList();
+  const { trackEntry, untrackEntry } = useNotesReminder();
   const [searchTerm, setSearchTerm] = useState('');
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const [notesText, setNotesText] = useState('');
+
+  // Track entries for reminder system
+  useEffect(() => {
+    studyList.forEach(entry => {
+      trackEntry(entry.id, 'study', entry.properNoun, !!entry.notes?.trim());
+    });
+  }, [studyList, trackEntry]);
 
   const filteredEntries = studyList.filter(entry =>
     entry.properNoun.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -27,17 +35,31 @@ const StudyList = () => {
   const handleEditNotes = (entry: StudyListEntry) => {
     setEditingNotes(entry.id);
     setNotesText(entry.notes || '');
+    // Track interaction when user starts editing
+    trackEntry(entry.id, 'study', entry.properNoun, !!entry.notes?.trim());
   };
 
   const handleSaveNotes = (id: string) => {
     updateNotes(id, notesText);
     setEditingNotes(null);
+    
+    // Update tracking after saving notes
+    const entry = studyList.find(e => e.id === id);
+    if (entry) {
+      trackEntry(id, 'study', entry.properNoun, !!notesText.trim());
+    }
+    
     setNotesText('');
   };
 
   const handleCancelEdit = () => {
     setEditingNotes(null);
     setNotesText('');
+  };
+
+  const handleRemoveEntry = (id: string) => {
+    removeFromStudyList(id);
+    untrackEntry(id);
   };
 
   if (studyList.length === 0) {
@@ -128,7 +150,7 @@ const StudyList = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeFromStudyList(entry.id)}
+                    onClick={() => handleRemoveEntry(entry.id)}
                     className="text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -146,7 +168,14 @@ const StudyList = () => {
               
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Notes</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Notes</span>
+                    {!entry.notes?.trim() && (
+                      <Badge variant="secondary" className="text-xs">
+                        Add notes to remember better!
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 
                 {editingNotes === entry.id ? (
@@ -175,10 +204,14 @@ const StudyList = () => {
                   </div>
                 ) : (
                   <div
-                    className="text-sm text-muted-foreground bg-muted/50 p-3 rounded cursor-pointer hover:bg-muted/70 transition-colors"
+                    className={`text-sm p-3 rounded cursor-pointer transition-colors ${
+                      entry.notes?.trim() 
+                        ? 'text-muted-foreground bg-muted/50 hover:bg-muted/70' 
+                        : 'text-muted-foreground bg-yellow-50 hover:bg-yellow-100 border border-yellow-200'
+                    }`}
                     onClick={() => handleEditNotes(entry)}
                   >
-                    {entry.notes || "Click to add notes..."}
+                    {entry.notes?.trim() || "Click to add notes..."}
                   </div>
                 )}
               </div>

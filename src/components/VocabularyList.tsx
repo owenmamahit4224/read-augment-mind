@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,27 +6,50 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { BookOpen, Calendar, FileText, Trash2, Edit3, Save, X } from 'lucide-react';
 import { useVocabulary } from '@/hooks/useVocabulary';
+import { useNotesReminder } from '@/hooks/useNotesReminder';
 import { VocabularyEntry } from '@/types/article';
 
 const VocabularyList = () => {
   const { vocabularyList, updateNotes, removeFromVocabulary } = useVocabulary();
+  const { trackEntry, untrackEntry } = useNotesReminder();
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const [notesText, setNotesText] = useState('');
+
+  // Track entries for reminder system
+  useEffect(() => {
+    vocabularyList.forEach(entry => {
+      trackEntry(entry.id, 'vocabulary', entry.word, !!entry.notes?.trim());
+    });
+  }, [vocabularyList, trackEntry]);
 
   const handleEditNotes = (entry: VocabularyEntry) => {
     setEditingNotes(entry.id);
     setNotesText(entry.notes || '');
+    // Track interaction when user starts editing
+    trackEntry(entry.id, 'vocabulary', entry.word, !!entry.notes?.trim());
   };
 
   const handleSaveNotes = (id: string) => {
     updateNotes(id, notesText);
     setEditingNotes(null);
+    
+    // Update tracking after saving notes
+    const entry = vocabularyList.find(e => e.id === id);
+    if (entry) {
+      trackEntry(id, 'vocabulary', entry.word, !!notesText.trim());
+    }
+    
     setNotesText('');
   };
 
   const handleCancelEdit = () => {
     setEditingNotes(null);
     setNotesText('');
+  };
+
+  const handleRemoveEntry = (id: string) => {
+    removeFromVocabulary(id);
+    untrackEntry(id);
   };
 
   if (vocabularyList.length === 0) {
@@ -86,7 +108,7 @@ const VocabularyList = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeFromVocabulary(entry.id)}
+                  onClick={() => handleRemoveEntry(entry.id)}
                   className="text-destructive hover:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -115,7 +137,14 @@ const VocabularyList = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-sm">Notes:</h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium text-sm">Notes:</h4>
+                    {!entry.notes?.trim() && (
+                      <Badge variant="secondary" className="text-xs">
+                        Add notes to remember better!
+                      </Badge>
+                    )}
+                  </div>
                   {editingNotes !== entry.id && (
                     <Button
                       variant="ghost"
@@ -154,8 +183,15 @@ const VocabularyList = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-sm text-muted-foreground">
-                    {entry.notes || 'No notes added yet.'}
+                  <div 
+                    className={`text-sm cursor-pointer transition-colors p-3 rounded ${
+                      entry.notes?.trim()
+                        ? 'text-muted-foreground bg-muted/50 hover:bg-muted/70'
+                        : 'text-muted-foreground bg-yellow-50 hover:bg-yellow-100 border border-yellow-200'
+                    }`}
+                    onClick={() => handleEditNotes(entry)}
+                  >
+                    {entry.notes || 'Click to add notes...'}
                   </div>
                 )}
               </div>
