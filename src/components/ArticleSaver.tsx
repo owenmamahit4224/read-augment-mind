@@ -1,31 +1,39 @@
-
 import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Save } from 'lucide-react';
+import { X, Plus, Save, Loader2 } from 'lucide-react';
 import { saveArticle } from '@/utils/localStorage';
 import { useToast } from '@/hooks/use-toast';
+import { useKnowledgeProfile } from '@/hooks/useKnowledgeProfile';
+import { ContextualInsight } from '@/types/knowledgeProfile';
+import ContextualInsights from './ContextualInsights';
 
 interface ArticleSaverProps {
-  onArticleSaved: () => void;
+  // You can define props here if needed
 }
 
-const ArticleSaver = ({ onArticleSaved }: ArticleSaverProps) => {
+const ArticleSaver = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const { generateInsights } = useKnowledgeProfile();
+  const [contextualInsights, setContextualInsights] = useState<ContextualInsight[]>([]);
 
   const handleSave = async () => {
     if (!title.trim() || !content.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please provide at least a title and content for the article.",
+        description: "Please provide both title and content.",
         variant: "destructive",
       });
       return;
@@ -33,12 +41,17 @@ const ArticleSaver = ({ onArticleSaved }: ArticleSaverProps) => {
 
     setIsLoading(true);
     try {
-      saveArticle({
+      const savedArticle = saveArticle({
         title: title.trim(),
         author: author.trim() || undefined,
         content: content.trim(),
         sourceUrl: sourceUrl.trim() || undefined,
+        tags: tags.filter(tag => tag.trim() !== ''),
       });
+
+      // Generate contextual insights for the new content
+      const insights = generateInsights(title.trim(), content.trim());
+      setContextualInsights(insights);
 
       toast({
         title: "Article Saved",
@@ -50,8 +63,9 @@ const ArticleSaver = ({ onArticleSaved }: ArticleSaverProps) => {
       setAuthor('');
       setContent('');
       setSourceUrl('');
-      
-      onArticleSaved();
+      setTags([]);
+      setCurrentTag('');
+
     } catch (error) {
       toast({
         title: "Error",
@@ -63,69 +77,133 @@ const ArticleSaver = ({ onArticleSaved }: ArticleSaverProps) => {
     }
   };
 
+  const handleAddTag = () => {
+    if (currentTag.trim() && !tags.includes(currentTag.trim())) {
+      setTags([...tags, currentTag.trim()]);
+      setCurrentTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Save className="h-5 w-5" />
-          Save New Article
-        </CardTitle>
-        <CardDescription>
-          Save articles for later reading and AI-powered analysis
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
-            <Input
-              id="title"
-              placeholder="Article title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="author">Author</Label>
-            <Input
-              id="author"
-              placeholder="Author name"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-            />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="sourceUrl">Source URL</Label>
-          <Input
-            id="sourceUrl"
-            placeholder="https://example.com/article"
-            value={sourceUrl}
-            onChange={(e) => setSourceUrl(e.target.value)}
-          />
-        </div>
+    <div className="space-y-6">
+      {/* Show contextual insights if available */}
+      {contextualInsights.length > 0 && (
+        <ContextualInsights 
+          insights={contextualInsights}
+          onActionClick={() => {
+            // Could navigate to knowledge profile or vocabulary
+            toast({
+              title: "Insight Noted",
+              description: "Check your Knowledge Profile for more details.",
+            });
+          }}
+        />
+      )}
 
-        <div className="space-y-2">
-          <Label htmlFor="content">Content *</Label>
-          <Textarea
-            id="content"
-            placeholder="Paste your article content here..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-[200px]"
-          />
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Save New Article</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4">
+            <div>
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                placeholder="Article Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
 
-        <Button 
-          onClick={handleSave} 
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : 'Save Article'}
-        </Button>
-      </CardContent>
-    </Card>
+            <div>
+              <Label htmlFor="author">Author (optional)</Label>
+              <Input
+                id="author"
+                placeholder="Author Name"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="content">Content</Label>
+              <Textarea
+                id="content"
+                placeholder="Article Content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="min-h-[120px]"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="sourceUrl">Source URL (optional)</Label>
+              <Input
+                id="sourceUrl"
+                placeholder="Article Source URL"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label>Tags (optional)</Label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="text"
+                  placeholder="Add a tag"
+                  value={currentTag}
+                  onChange={(e) => setCurrentTag(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddTag();
+                    }
+                  }}
+                />
+                <Button type="button" variant="outline" size="sm" onClick={handleAddTag}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Tag
+                </Button>
+              </div>
+              <div className="flex flex-wrap space-x-2 mt-2">
+                {tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="gap-x-2">
+                    {tag}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-mr-2 h-5 w-5 rounded-full text-muted-foreground hover:text-foreground"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <Button onClick={handleSave} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save Article
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

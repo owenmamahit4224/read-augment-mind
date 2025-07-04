@@ -5,6 +5,7 @@ import AIInsights from './AIInsights';
 import ArticleAnalysis from './ArticleAnalysis';
 import ProperNounSelector from './ProperNounSelector';
 import VocabularySelector from './VocabularySelector';
+import KnowledgeProfile from './KnowledgeProfile';
 
 interface ArticleSidebarProps {
   articleId: string;
@@ -16,11 +17,12 @@ const ArticleSidebar = ({ articleId, articleTitle, content }: ArticleSidebarProp
   return (
     <div className="sticky top-24 space-y-6">
       <Tabs defaultValue="insights" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="insights">Insights</TabsTrigger>
           <TabsTrigger value="analysis">Analysis</TabsTrigger>
           <TabsTrigger value="study">Study</TabsTrigger>
           <TabsTrigger value="vocabulary">Vocab</TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
 
         <TabsContent value="insights" className="mt-6">
@@ -45,6 +47,10 @@ const ArticleSidebar = ({ articleId, articleTitle, content }: ArticleSidebarProp
             articleTitle={articleTitle}
             content={content}
           />
+        </TabsContent>
+
+        <TabsContent value="profile" className="mt-6">
+          <KnowledgeProfile />
         </TabsContent>
       </Tabs>
     </div>
