@@ -1,11 +1,7 @@
-
 import { VocabularyEntry, StudyListEntry } from '@/types/article';
 import { KnowledgeProfileEntry } from '@/types/knowledgeProfile';
-import { 
-  getVocabularyEntries, 
-  getStudyListEntries 
-} from '@/utils/vocabularyStorage';
-import { getStudyListEntries as getStudyEntries } from '@/utils/studyListStorage';
+import { getVocabularyEntries } from '@/utils/vocabularyStorage';
+import { getStudyListEntries } from '@/utils/studyListStorage';
 
 export const extractTopicsFromText = (text: string): string[] => {
   // Simple topic extraction - can be enhanced with AI in the future
@@ -121,7 +117,7 @@ export const generateKnowledgeFromStudyList = (
 
 export const generateKnowledgeProfile = (): void => {
   const vocabularyEntries = getVocabularyEntries();
-  const studyEntries = getStudyEntries();
+  const studyEntries = getStudyListEntries();
   
   const vocabKnowledge = generateKnowledgeFromVocabulary(vocabularyEntries);
   const studyKnowledge = generateKnowledgeFromStudyList(studyEntries);

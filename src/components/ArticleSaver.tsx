@@ -13,10 +13,10 @@ import { ContextualInsight } from '@/types/knowledgeProfile';
 import ContextualInsights from './ContextualInsights';
 
 interface ArticleSaverProps {
-  // You can define props here if needed
+  onArticleSaved?: () => void;
 }
 
-const ArticleSaver = () => {
+const ArticleSaver = ({ onArticleSaved }: ArticleSaverProps) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
@@ -57,6 +57,11 @@ const ArticleSaver = () => {
         title: "Article Saved",
         description: "Your article has been saved successfully!",
       });
+
+      // Call the callback if provided
+      if (onArticleSaved) {
+        onArticleSaved();
+      }
 
       // Reset form
       setTitle('');
