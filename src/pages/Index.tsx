@@ -6,6 +6,8 @@ import SavedArticlesList from '@/components/SavedArticlesList';
 import ApiSettings from '@/components/ApiSettings';
 import StudyList from '@/components/StudyList';
 import VocabularyList from '@/components/VocabularyList';
+import KnowledgeProfile from '@/components/KnowledgeProfile';
+import AIKnowledgeAnalyzer from '@/components/AIKnowledgeAnalyzer';
 
 const Index = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -25,11 +27,13 @@ const Index = () => {
         </div>
 
         <Tabs defaultValue="save" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="save">Save Article</TabsTrigger>
             <TabsTrigger value="library">My Library</TabsTrigger>
             <TabsTrigger value="study">Study List</TabsTrigger>
             <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
+            <TabsTrigger value="knowledge">Knowledge</TabsTrigger>
+            <TabsTrigger value="ai-insights">AI Insights</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -47,6 +51,14 @@ const Index = () => {
 
           <TabsContent value="vocabulary" className="mt-6">
             <VocabularyList />
+          </TabsContent>
+
+          <TabsContent value="knowledge" className="mt-6">
+            <KnowledgeProfile />
+          </TabsContent>
+
+          <TabsContent value="ai-insights" className="mt-6">
+            <AIKnowledgeAnalyzer />
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
