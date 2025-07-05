@@ -1,16 +1,25 @@
+
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0;
+  text-align: left;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 4em;
+  padding: 1em;
   will-change: filter;
   transition: filter 300ms;
 }
+
+@media (min-width: 768px) {
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+  }
+}
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
@@ -34,9 +43,46 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 2rem;
+  }
 }
 
 .read-the-docs {
   color: #888;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Ensure proper text wrapping on mobile */
+@media (max-width: 768px) {
+  h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  p, div, span {
+    word-wrap: break-word;
+  }
+}
+
+/* Responsive table styling */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.25rem;
+  }
 }

@@ -55,56 +55,61 @@ const ContextualInsights = ({ insights, onActionClick }: ContextualInsightsProps
 
   return (
     <Card className="border-2 border-blue-200 bg-blue-50/30">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-blue-800">
-          <Brain className="h-5 w-5" />
-          Contextual Insights
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center gap-2 text-blue-800 text-lg sm:text-xl">
+          <Brain className="h-4 w-4 sm:h-5 sm:w-5" />
+          <span className="text-sm sm:text-base">Contextual Insights</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4">
         {insights.map((insight) => {
           const Icon = getInsightIcon(insight.type);
           return (
             <div 
               key={insight.id} 
-              className="border rounded-lg p-4 bg-white"
+              className="border rounded-lg p-3 sm:p-4 bg-white"
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-full ${getInsightColor(insight.type)}`}>
-                    <Icon className="h-4 w-4" />
+              <div className="flex items-start justify-between mb-2 gap-2">
+                <div className="flex items-start gap-2 flex-1 min-w-0">
+                  <div className={`p-1.5 sm:p-2 rounded-full flex-shrink-0 ${getInsightColor(insight.type)}`}>
+                    <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
                   </div>
-                  <div>
-                    <h4 className="font-medium">{insight.title}</h4>
-                    <Badge variant="outline" className="text-xs capitalize">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-medium text-sm sm:text-base leading-tight">{insight.title}</h4>
+                    <Badge variant="outline" className="text-xs capitalize mt-1">
                       {insight.type}
                     </Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-muted-foreground">
-                    {Math.round(insight.confidence * 100)}% confidence
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {Math.round(insight.confidence * 100)}%
                   </span>
                 </div>
               </div>
               
-              <p className="text-sm text-muted-foreground mb-3">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 leading-relaxed">
                 {insight.description}
               </p>
               
               {insight.relatedTopics.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {insight.relatedTopics.map((topic, index) => (
+                  {insight.relatedTopics.slice(0, 3).map((topic, index) => (
                     <Badge key={index} variant="secondary" className="text-xs">
                       {topic}
                     </Badge>
                   ))}
+                  {insight.relatedTopics.length > 3 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{insight.relatedTopics.length - 3} more
+                    </Badge>
+                  )}
                 </div>
               )}
               
               {insight.actionable && insight.suggestedAction && (
-                <div className="flex items-center justify-between pt-2 border-t">
-                  <span className="text-xs text-muted-foreground">
+                <div className="flex items-center justify-between pt-2 border-t gap-2">
+                  <span className="text-xs text-muted-foreground flex-1 min-w-0">
                     💡 {insight.suggestedAction}
                   </span>
                   {onActionClick && (
@@ -112,8 +117,10 @@ const ContextualInsights = ({ insights, onActionClick }: ContextualInsightsProps
                       size="sm" 
                       variant="outline"
                       onClick={() => onActionClick(insight)}
+                      className="text-xs flex-shrink-0"
                     >
-                      Take Action
+                      <span className="hidden sm:inline">Take Action</span>
+                      <span className="sm:hidden">Act</span>
                     </Button>
                   )}
                 </div>
