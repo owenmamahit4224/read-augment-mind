@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CardContent } from '@/components/ui/card';
-import AdaptiveRibbonMenu from './AdaptiveRibbonMenu';
+import ProperNounHighlighter from './ProperNounHighlighter';
 
 interface ArticleContentProps {
   content: string;
@@ -9,30 +9,10 @@ interface ArticleContentProps {
   articleTitle?: string;
 }
 
-const ArticleContent = ({ content, articleId, articleTitle }: ArticleContentProps) => {
-  // If we have article context, wrap with adaptive menu
-  if (articleId && articleTitle) {
-    return (
-      <AdaptiveRibbonMenu 
-        articleId={articleId} 
-        articleTitle={articleTitle} 
-        articleContent={content}
-      >
-        <CardContent className="prose prose-sm max-w-none p-6">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">
-            {content}
-          </div>
-        </CardContent>
-      </AdaptiveRibbonMenu>
-    );
-  }
-
-  // Fallback without adaptive menu
+const ArticleContent = ({ content }: ArticleContentProps) => {
   return (
     <CardContent className="prose prose-sm max-w-none p-6">
-      <div className="whitespace-pre-wrap text-sm leading-relaxed">
-        {content}
-      </div>
+      <ProperNounHighlighter content={content} />
     </CardContent>
   );
 };
