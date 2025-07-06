@@ -2,7 +2,7 @@
 {
   "functions": {
     "api/auth/github.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
