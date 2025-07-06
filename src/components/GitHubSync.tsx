@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useGitHubSync } from '@/hooks/useGitHubSync';
-import { Github, Cloud, Download, Upload, LogOut, AlertCircle } from 'lucide-react';
+import { Github, Cloud, Download, Upload, LogOut, AlertCircle, ExternalLink } from 'lucide-react';
 
 const GitHubSync = () => {
   const {
@@ -19,6 +19,10 @@ const GitHubSync = () => {
     syncToGitHub,
     restoreFromGitHub,
   } = useGitHubSync();
+
+  // Check if GitHub OAuth is configured
+  const isConfigured = import.meta.env.VITE_GITHUB_CLIENT_ID && 
+                      import.meta.env.VITE_GITHUB_CLIENT_ID !== 'your_github_client_id';
 
   if (!isAuthenticated) {
     return (
@@ -33,26 +37,50 @@ const GitHubSync = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div className="space-y-2">
-              <p className="text-sm text-blue-800 font-medium">
-                Setup Required
-              </p>
-              <p className="text-sm text-blue-700">
-                This feature requires a GitHub OAuth app to be configured. In a production environment, 
-                you would need to set up GitHub OAuth credentials and a backend service to handle the token exchange.
-              </p>
+          {!isConfigured && (
+            <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+              <div className="space-y-3">
+                <p className="text-sm text-amber-800 font-medium">
+                  Setup Required
+                </p>
+                <div className="text-sm text-amber-700 space-y-2">
+                  <p>To enable GitHub sync, you need to:</p>
+                  <ol className="list-decimal list-inside space-y-1 ml-2">
+                    <li>Create a GitHub OAuth App</li>
+                    <li>Deploy this app to Vercel</li>
+                    <li>Configure environment variables</li>
+                  </ol>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => window.open('https://github.com/settings/developers', '_blank')}
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    GitHub Developer Settings
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => window.open('https://vercel.com/new', '_blank')}
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Deploy to Vercel
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
           
           <Button 
             onClick={authenticate} 
             className="w-full"
-            disabled
+            disabled={!isConfigured}
           >
             <Github className="h-4 w-4 mr-2" />
-            Connect GitHub Account (Demo Mode)
+            {isConfigured ? 'Connect GitHub Account' : 'Connect GitHub Account (Not Configured)'}
           </Button>
           
           <div className="text-sm text-muted-foreground space-y-2">

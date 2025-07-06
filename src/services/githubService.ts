@@ -28,7 +28,6 @@ interface GitHubAuthState {
 }
 
 export class GitHubService {
-  private static readonly CLIENT_ID = 'your_github_client_id'; // This would need to be configured
   private static readonly REDIRECT_URI = `${window.location.origin}/auth/github/callback`;
   private static readonly SCOPES = 'gist';
   private static readonly GIST_FILENAME = 'reading-app-data.json';
@@ -42,18 +41,45 @@ export class GitHubService {
 
   // OAuth flow
   public initiateOAuth(): void {
-    const authUrl = `https://github.com/login/oauth/authorize?client_id=${GitHubService.CLIENT_ID}&redirect_uri=${encodeURIComponent(GitHubService.REDIRECT_URI)}&scope=${GitHubService.SCOPES}`;
+    // Get client ID from environment or use placeholder
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID || 'your_github_client_id';
+    
+    if (clientId === 'your_github_client_id') {
+      console.warn('GitHub Client ID not configured. Please set VITE_GITHUB_CLIENT_ID environment variable.');
+    }
+
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(GitHubService.REDIRECT_URI)}&scope=${GitHubService.SCOPES}`;
     window.location.href = authUrl;
   }
 
   public async handleOAuthCallback(code: string): Promise<GitHubAuthState> {
     try {
-      // In a real implementation, this would go through a backend service
-      // For now, we'll simulate the token exchange
       console.log('OAuth code received:', code);
       
-      // This is a placeholder - in production, you'd exchange the code for a token via your backend
-      throw new Error('OAuth token exchange not implemented. This requires a backend service.');
+      // Use our Vercel function for token exchange
+      const response = await fetch('/api/auth/github', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'OAuth exchange failed');
+      }
+
+      const data = await response.json();
+      
+      // Store the access token
+      this.setAccessToken(data.access_token);
+      
+      return {
+        isAuthenticated: true,
+        user: data.user,
+        accessToken: data.access_token,
+      };
     } catch (error) {
       console.error('GitHub OAuth error:', error);
       throw error;
