@@ -6,7 +6,7 @@ import {
   saveVocabularyEntry, 
   updateVocabularyEntry, 
   deleteVocabularyEntry 
-} from '@/utils/vocabularyStorage';
+} from '@/utils/localStorage';
 import { useToast } from '@/hooks/use-toast';
 import { checkWordInDictionary } from '@/utils/dictionaryService';
 
