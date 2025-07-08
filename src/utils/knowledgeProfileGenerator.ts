@@ -1,8 +1,6 @@
 
 import { KnowledgeProfileService } from '@/services/knowledgeProfileService';
-import { getVocabularyEntries } from '@/utils/vocabularyStorage';
-import { getStudyListEntries } from '@/utils/studyListStorage';
-import { saveKnowledgeProfile } from './knowledgeProfileStorage';
+import { getVocabularyEntries, getStudyListEntries, saveKnowledgeProfile } from '@/utils/localStorage';
 
 export const generateKnowledgeProfile = (): void => {
   const vocabularyEntries = getVocabularyEntries();

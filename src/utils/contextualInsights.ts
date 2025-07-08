@@ -1,6 +1,6 @@
 
 import { ContextualInsight, LearningGap } from '@/types/knowledgeProfile';
-import { getKnowledgeProfile } from './knowledgeProfileStorage';
+import { getKnowledgeProfile } from './localStorage';
 import { extractTopicsFromText } from './knowledgeProfileGenerator';
 
 export const generateContextualInsights = (
