@@ -1,35 +1,11 @@
-
-import { KnowledgeProfile, KnowledgeProfileEntry } from '@/types/knowledgeProfile';
+import { KnowledgeProfile } from '@/types/knowledgeProfile';
 import { configService } from './configService';
+import { SuggestedProject, ReadingRecommendation, CuriosityAssessment } from '@/types/aiAnalysis';
 
 export interface AnalysisMetrics {
   topicDiversity: number;
   advancedRatio: number;
   totalInteractions: number;
-  curiosityScore: number;
-}
-
-export interface SuggestedProject {
-  title: string;
-  description: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  requiredTopics: string[];
-  estimatedTime: string;
-}
-
-export interface ReadingRecommendation {
-  title: string;
-  category: string;
-  reason: string;
-  priority: 'high' | 'medium' | 'low';
-  topicGap: string;
-  estimatedReadingTime: string;
-}
-
-export interface CuriosityAssessment {
-  profile: string;
-  evolution: string;
-  growthAreas: string[];
   curiosityScore: number;
 }
 

@@ -2,20 +2,9 @@
 import { useState } from 'react';
 import { useKnowledgeProfile } from './useKnowledgeProfile';
 import { useToast } from './use-toast';
-import { 
-  KnowledgeAnalysisService, 
-  SuggestedProject, 
-  ReadingRecommendation, 
-  CuriosityAssessment 
-} from '@/services/knowledgeAnalysisService';
+import { KnowledgeAnalysisService } from '@/services/knowledgeAnalysisService';
 import { ErrorService, ErrorType } from '@/services/errorService';
-
-interface AIKnowledgeAnalysis {
-  suggestedProjects: SuggestedProject[];
-  readingRecommendations: ReadingRecommendation[];
-  curiosityAssessment: CuriosityAssessment;
-  generatedAt: Date;
-}
+import { AIKnowledgeAnalysis, SuggestedProject, ReadingRecommendation, CuriosityAssessment } from '@/types/aiAnalysis';
 
 export const useAIKnowledgeAnalysis = () => {
   const [analysis, setAnalysis] = useState<AIKnowledgeAnalysis | null>(null);
