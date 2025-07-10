@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ArticleSaver from '@/components/ArticleSaver';
 import SavedArticlesList from '@/components/SavedArticlesList';
 import ApiSettings from '@/components/ApiSettings';
+import { DataManagement } from '@/components/DataManagement';
 import StudyList from '@/components/StudyList';
 import VocabularyList from '@/components/VocabularyList';
 import KnowledgeProfile from '@/components/KnowledgeProfile';
@@ -62,7 +63,10 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="settings" className="mt-4 sm:mt-6">
-            <ApiSettings />
+            <div className="space-y-6">
+              <ApiSettings />
+              <DataManagement />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
