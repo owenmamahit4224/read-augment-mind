@@ -88,6 +88,11 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <footer className="text-center p-4 text-xs text-muted-foreground">
+        <a href="https://github.com/owenmamahit4224/read-augment-mind" target="_blank" rel="noopener noreferrer" className="hover:underline">
+          GitHub Repository
+        </a>
+      </footer>
     </div>
   );
 };
