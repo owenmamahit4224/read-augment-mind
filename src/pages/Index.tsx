@@ -1,14 +1,20 @@
 
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ArticleSaver from '@/components/ArticleSaver';
-import SavedArticlesList from '@/components/SavedArticlesList';
-import ApiSettings from '@/components/ApiSettings';
-import { DataManagement } from '@/components/DataManagement';
-import StudyList from '@/components/StudyList';
-import VocabularyList from '@/components/VocabularyList';
-import KnowledgeProfile from '@/components/KnowledgeProfile';
-import AIKnowledgeAnalyzer from '@/components/AIKnowledgeAnalyzer';
+
+// Lazy-loaded components
+const SavedArticlesList = lazy(() => import('@/components/SavedArticlesList'));
+const ApiSettings = lazy(() => import('@/components/ApiSettings'));
+const DataManagement = lazy(() => import('@/components/DataManagement').then(module => ({ default: module.DataManagement })));
+const StudyList = lazy(() => import('@/components/StudyList'));
+const VocabularyList = lazy(() => import('@/components/VocabularyList'));
+const KnowledgeProfile = lazy(() => import('@/components/KnowledgeProfile'));
+const AIKnowledgeAnalyzer = lazy(() => import('@/components/AIKnowledgeAnalyzer'));
+
+const TabContentFallback = () => (
+  <div className="p-4 text-center">Loading...</div>
+);
 
 const Index = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -43,30 +49,42 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="library" className="mt-4 sm:mt-6">
-            <SavedArticlesList refreshTrigger={refreshTrigger} />
+            <Suspense fallback={<TabContentFallback />}>
+              <SavedArticlesList refreshTrigger={refreshTrigger} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="study" className="mt-4 sm:mt-6">
-            <StudyList />
+            <Suspense fallback={<TabContentFallback />}>
+              <StudyList />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="vocabulary" className="mt-4 sm:mt-6">
-            <VocabularyList />
+            <Suspense fallback={<TabContentFallback />}>
+              <VocabularyList />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="knowledge" className="mt-4 sm:mt-6">
-            <KnowledgeProfile />
+            <Suspense fallback={<TabContentFallback />}>
+              <KnowledgeProfile />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="ai-insights" className="mt-4 sm:mt-6">
-            <AIKnowledgeAnalyzer />
+            <Suspense fallback={<TabContentFallback />}>
+              <AIKnowledgeAnalyzer />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="settings" className="mt-4 sm:mt-6">
-            <div className="space-y-6">
-              <ApiSettings />
-              <DataManagement />
-            </div>
+            <Suspense fallback={<TabContentFallback />}>
+              <div className="space-y-6">
+                <ApiSettings />
+                <DataManagement />
+              </div>
+            </Suspense>
           </TabsContent>
         </Tabs>
       </div>
